@@ -55,26 +55,28 @@ let startY = 0;
 let isDrawing = false;
 let isIncWidth = true;
 // Functions made drawing possible
-function startDrawing(e){
+function startDrawing(x,y){
+    // console.log(e);
     isDrawing = true;
-    startX = e.offsetX;
-    startY = e.offsetY;
+    startX = x;
+    startY = y;
 }
 function stopDrawing(){
     isDrawing = false;
 }
-function drawing(e){
+function drawing(x,y){
     if(!isDrawing) return;
+    
     // change playground pointer color
     ctx.strokeStyle = `hsl(${hslVal++}, 100%, 50%, 1)`;
 
     ctx.beginPath();
     ctx.moveTo(startX, startY);
-    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.lineTo(x, y);
     ctx.stroke();
 
-    startX = e.offsetX;
-    startY = e.offsetY;
+    startX = x;
+    startY = y;
 
     //check if pencil pointer width become 100
     if(ctx.lineWidth > 100 || ctx.lineWidth < 5){
@@ -94,8 +96,14 @@ function drawing(e){
 }
 
 // Mouse Events over playground
-playground.addEventListener('mousedown', startDrawing);
-playground.addEventListener('mousemove', drawing);
+playground.addEventListener('mousedown', (e) => startDrawing(e.offsetX, e.offsetY));
+playground.addEventListener('touchstart', (e) => startDrawing(e.touches[0].clientX, e.touches[0].clientY));
+
+playground.addEventListener('mousemove', (e) => drawing(e.offsetX, e.offsetY));
+playground.addEventListener('touchmove', (e) => drawing(e.touches[0].clientX, e.touches[0].clientY));
+
 playground.addEventListener('mouseup', stopDrawing);
 playground.addEventListener('mouseout', stopDrawing);
+playground.addEventListener('touchcancel', stopDrawing);
+playground.addEventListener('touchend', stopDrawing);
 
